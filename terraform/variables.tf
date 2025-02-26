@@ -1,8 +1,3 @@
-variable "ibmcloud_api_key" {
-  description = "IBM Cloud API key"
-  type        = string
-}
-
 variable "trusted_profile_name" {
   description = "trusted profile name"
   type        = string
