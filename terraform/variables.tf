@@ -3,13 +3,13 @@ variable "ibmcloud_api_key" {
   type        = string
 }
 
-variable "service_id_name" {
-  description = "IBM Cloud API key"
+variable "trusted_profile_name" {
+  description = "trusted profile name"
   type        = string
 }
 
 
-variable "service_id_api_key_name" {
-  description = "IBM Cloud API key"
+variable "wiz_service_id" {
+  description = "wiz IBM service id"
   type        = string
 }

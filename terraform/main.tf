@@ -1,33 +1,25 @@
 terraform {
-  required_providers {
-    ibm = {
-      source  = "IBM-Cloud/ibm"
-      version = "1.57.0"
-    }
-  }
+ required_providers {
+   ibm = {
+     source  = "IBM-Cloud/ibm"
+     version = "1.75.2"
+   }
+ }
 }
 
-provider "ibm" {
-  ibmcloud_api_key = var.ibmcloud_api_key
+resource "ibm_iam_trusted_profile" "example_profile" {
+  name        = var.trusted_profile_name
+  description = "Trusted profile for granting access to a service ID managed by Wiz"
 }
 
-# Service ID Creation
-resource "ibm_iam_service_id" "service_id" {
-  name        = var.service_id_name
-  description = "Service ID created using Terraform"
+resource "ibm_iam_trusted_profile_identity" "service_id_association" {
+  identifier         = var.wiz_service_id
+  identity_type      = "serviceid"
+  profile_id         = ibm_iam_trusted_profile.example_profile.id
+  type               = "serviceid"
 }
 
-# Optional: API Key for the Service ID
-resource "ibm_iam_service_api_key" "api_key" {
-  name        = var.service_id_api_key_name
-  iam_service_id = ibm_iam_service_id. service_id. iam_id
-  description = "API Key for Service ID"
-}
-
-
-# Optional: Assign Policy to Service ID
-resource "ibm_iam_service_policy" "policy" {
-  iam_service_id = ibm_iam_service_id.service_id.id
-  description    = "IAM Service Policy"
+resource "ibm_iam_trusted_profile_policy" "wiz_policy" {
+  profile_id = ibm_iam_trusted_profile.example_profile.id
   roles = ["Viewer"]
 }
