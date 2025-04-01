@@ -8,7 +8,7 @@ terraform {
 }
 
 provider "ibm" {
-  ibmcloud_api_key = "skorNgKF7gcNAxS75TNx6YB6my5hpkqtQHoot3o2SAuL"
+  ibmcloud_api_key = "deletedKey"
   region           = "us-south"
 }
 
