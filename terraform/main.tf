@@ -7,30 +7,9 @@ terraform {
  }
 }
 
-provider "ibm" {
-  ibmcloud_api_key = "deletedKey"
-  region           = "us-south"
-}
-
-# resource "ibm_iam_trusted_profile_template" "trusted_profile_template_instance" {
-#   name = "${var.trusted_profile_name}"
-#   description = "${var.trusted_profile_description}"
-#   profile {
-#     name = "profile from template"
-#     description = "description of profile from template"
-#     identities {
-#       iam_id = "iam-ServiceId-9b8290f1-5f77-4d62-a3f8-c79d51898457"
-#       identifier = "ServiceId-9b8290f1-5f77-4d62-a3f8-c79d51898457"
-#       type = "serviceid"
-#     }
-#   }
-#   committed = true
-# }
-
-# Create Kubernetes administrator policy template
-resource "ibm_iam_policy_template" "Wiz-Viewer5" {
-  name = "viewer 3"
-  description = "Grant viewer access to all resources in the account"
+resource "ibm_iam_policy_template" "Wiz-Viewer-platform-services" {
+  name = "Wiz View platform services"
+  description = "Grant viewer access to service platform resources"
   committed = true
   policy {
     type = "access"
@@ -41,20 +20,13 @@ resource "ibm_iam_policy_template" "Wiz-Viewer5" {
         value = "platform_service"
       }
     }
-    resource {
-      attributes {
-        key = "serviceType"
-        operator = "stringEquals"
-        value = "service"
-      }
-    }
     roles = ["Viewer"]
   }
 }
 
 # Create second policy template
-resource "ibm_iam_policy_template" "Wiz-Viewer6" {
-  name = "viewer 4"
+resource "ibm_iam_policy_template" "Wiz-Viewer-services" {
+  name = "Wiz View services"
   description = "Grant viewer access to service type resources"
   committed = true
   policy {
@@ -72,43 +44,48 @@ resource "ibm_iam_policy_template" "Wiz-Viewer6" {
 
 # Create SRE team Trusted profile template
 resource "ibm_iam_trusted_profile_template" "Wiz_template" {
-  name = "wiz"
-  description = "wiz access"
+  name = var.trusted_profile_template_name
+  description = var.trusted_profile_template_description
   profile {
-    name = "wiz profile"
+    name = var.trusted_profile_name
     identities {
-      iam_id = "iam-ServiceId-9b8290f1-5f77-4d62-a3f8-c79d51898457"
-      identifier = "ServiceId-9b8290f1-5f77-4d62-a3f8-c79d51898457"
+      iam_id = var.wiz_service_id_iam_id
+      identifier = var.wiz_service_id_identifier
       type = "serviceid"
     }
   }
   policy_template_references {
-    id = split("/", ibm_iam_policy_template.Wiz-Viewer5.id)[0]
-    version = ibm_iam_policy_template.Wiz-Viewer5.version
+    id = split("/", ibm_iam_policy_template.Wiz-Viewer-platform-services.id)[0]
+    version = ibm_iam_policy_template.Wiz-Viewer-platform-services.version
   }
   policy_template_references {
-    id = split("/", ibm_iam_policy_template.Wiz-Viewer6.id)[0]
-    version = ibm_iam_policy_template.Wiz-Viewer6.version
+    id = split("/", ibm_iam_policy_template.Wiz-Viewer-services.id)[0]
+    version = ibm_iam_policy_template.Wiz-Viewer-services.version
   }
   committed = true
 }
 
-# Assign (or update) the trusted profile template to an account agroup
 resource "ibm_iam_trusted_profile_template_assignment" "tp_assignment_instance" {
-  template_id = split("/", ibm_iam_trusted_profile_template.Wiz_template.id)[0]
+  for_each = toset(var.accounts)
+
+  template_id      = split("/", ibm_iam_trusted_profile_template.Wiz_template.id)[0]
   template_version = ibm_iam_trusted_profile_template.Wiz_template.version
-  target_type = "Account" // or "Account"
-  target = "50907a4ca4fa496cae2e54b087da52d7" // or "<account id>"
+  target_type      = "Account"
+  target           = each.value  # Using each item from the list
+
   depends_on = [
     ibm_iam_trusted_profile_template.Wiz_template
   ]
 }
 
 resource "ibm_iam_trusted_profile_template_assignment" "tp_assignment_instance_accountGroup" {
-  template_id = split("/", ibm_iam_trusted_profile_template.Wiz_template.id)[0]
+  for_each = toset(var.target_groups)
+
+  template_id      = split("/", ibm_iam_trusted_profile_template.Wiz_template.id)[0]
   template_version = ibm_iam_trusted_profile_template.Wiz_template.version
-  target_type = "AccountGroup" // or "Account"
-  target = "285d1a15d4074b569d89c711ac0bf9d8" // or "<account id>"
+  target_type      = "AccountGroup"
+  target           = each.value  # Using each item from the list
+
   depends_on = [
     ibm_iam_trusted_profile_template.Wiz_template
   ]
