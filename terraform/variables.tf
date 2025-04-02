@@ -1,6 +1,7 @@
 variable "trusted_profile_template_name" {
   description = "trusted profile template name"
   type        = string
+  default     = "Wiz Trusted Profile Template"
 }
 
 variable "trusted_profile_template_description" {
@@ -11,6 +12,7 @@ variable "trusted_profile_template_description" {
 variable "trusted_profile_name" {
   description = "trusted profile name"
   type        = string
+  default     = "Wiz Trusted Profile"
 }
 
 variable "wiz_service_id_identifier" {
