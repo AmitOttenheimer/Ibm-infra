@@ -7,6 +7,7 @@ variable "trusted_profile_template_name" {
 variable "trusted_profile_template_description" {
   description = "trusted profile template description"
   type        = string
+  default     = "Wiz Trusted Profile Template"
 }
 
 variable "trusted_profile_name" {
@@ -28,9 +29,11 @@ variable "wiz_service_id_iam_id" {
 variable "accounts" {
   description = "A list of account ids"
   type        = list(string)
+  default     = []
 }
 
 variable "target_groups" {
   description = "A list of target groups"
   type        = list(string)
+  default     = []
 }
