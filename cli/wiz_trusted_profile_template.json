@@ -1,0 +1,25 @@
+{
+  "name": "wiz_trusted_profile_template",
+  "description": "",
+  "account_id": "",
+  "profile": {
+    "name": "wiz_trusted_profile",
+    "identities": [
+      {
+        "iam_id": "",
+        "identifier": "",
+        "type": "serviceid"
+      }
+    ]
+  },
+  "policy_template_references": [
+    {
+      "id": "",
+      "version": "1"
+    },
+    {
+      "id": "",
+      "version": "1"
+    }
+  ]
+}

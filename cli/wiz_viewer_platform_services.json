@@ -1,0 +1,24 @@
+{
+  "name": "Wiz_Viewer_platform_services",
+  "description": "Grant view access to wiz for scanning platform services",
+  "account_id": "",
+  "policy": {
+    "type": "access",
+    "description": "Grant view access to wiz for scanning platform services",
+    "resource": {
+      "attributes": [
+        {
+          "key": "serviceType",
+          "operator": "stringEquals",
+          "value": "platform_service"
+        }
+      ]
+    },"control": {
+      "grant": {
+        "roles": [{
+          "role_id": "crn:v1:bluemix:public:iam::::role:Viewer"
+        }]
+      }
+    }
+  }
+}
